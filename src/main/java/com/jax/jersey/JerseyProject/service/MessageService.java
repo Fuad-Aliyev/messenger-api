@@ -1,6 +1,7 @@
 package com.jax.jersey.JerseyProject.service;
 
 import com.jax.jersey.JerseyProject.database.DatabaseClass;
+import com.jax.jersey.JerseyProject.exception.DataNotFoundException;
 import com.jax.jersey.JerseyProject.model.Message;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,10 @@ public class MessageService {
     }
 
     public Message getMessage(long id) {
-        return messageMap.get(id);
+        Message message = messageMap.get(id);
+        if (message == null)
+            throw new DataNotFoundException("Message with id " + id + " not found");
+        return message;
     }
 
     public Message addMessage(Message message) {

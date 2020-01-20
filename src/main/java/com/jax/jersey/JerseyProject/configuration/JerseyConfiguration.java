@@ -1,5 +1,7 @@
 package com.jax.jersey.JerseyProject.configuration;
 
+import com.jax.jersey.JerseyProject.exception.DataNotFoundExceptionMapper;
+import com.jax.jersey.JerseyProject.exception.GenericExceptionMapper;
 import com.jax.jersey.JerseyProject.resource.CommentResource;
 import com.jax.jersey.JerseyProject.resource.InjectDemoResource;
 import com.jax.jersey.JerseyProject.resource.MessageResource;
@@ -14,5 +16,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(ProfileResource.class);
         register(InjectDemoResource.class);
         register(CommentResource.class);
+        register(DataNotFoundExceptionMapper.class);
+        register(GenericExceptionMapper.class);
     }
 }
