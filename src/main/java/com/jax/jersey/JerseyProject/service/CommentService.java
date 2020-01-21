@@ -2,14 +2,17 @@ package com.jax.jersey.JerseyProject.service;
 
 import com.jax.jersey.JerseyProject.database.DatabaseClass;
 import com.jax.jersey.JerseyProject.model.Comment;
+import com.jax.jersey.JerseyProject.model.ErrorMessage;
 import com.jax.jersey.JerseyProject.model.Message;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class CommentService {
 
     private Map<Long, Message> messageMap = DatabaseClass.getMessages();
@@ -20,8 +23,20 @@ public class CommentService {
     }
 
     public Comment getComment(long messageId, long commentId) {
+        ErrorMessage errorMessage = new ErrorMessage("Not Found",
+                404, "http://something/api");
+        Response response = Response.status(Response.Status.NOT_FOUND)
+                .entity(errorMessage)
+                .build();
+
+        Message message = messageMap.get(messageId);
+        if (message == null)
+            throw new NotFoundException(response);
         Map<Long, Comment> commentMap = messageMap.get(messageId).getComments();
-        return commentMap.get(commentId);
+        Comment comment = commentMap.get(commentId);
+        if (comment == null)
+            throw new WebApplicationException(response);
+        return comment;
     }
 
     public Comment addComment(long messageId, Comment comment) {
