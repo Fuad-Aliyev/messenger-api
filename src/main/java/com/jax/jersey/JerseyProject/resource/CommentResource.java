@@ -3,6 +3,7 @@ package com.jax.jersey.JerseyProject.resource;
 import com.jax.jersey.JerseyProject.model.Comment;
 import com.jax.jersey.JerseyProject.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
@@ -14,8 +15,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CommentResource {
 
-    @Autowired
-    CommentService commentService;
+    CommentService commentService = new CommentService();
 
     @GET
     public List<Comment> getAllComments(@PathParam("messageId")long messageId) {

@@ -13,6 +13,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @Path("/messages")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(value = {MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
 public class MessageResource {
     @Autowired
     MessageService messageService;
@@ -30,8 +32,13 @@ public class MessageResource {
     @GET
     @Path("/{messageId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Message getMessage(@PathParam("messageId") long messageId) {
-        return messageService.getMessage(messageId);
+    public Message getMessage(@PathParam("messageId") long messageId, @Context UriInfo uriInfo) {
+        Message message = messageService.getMessage(messageId);
+        message.addLink(getUriForSelf(uriInfo, message), "self");
+        message.addLink(getUriForProfile(uriInfo, message), "profile");
+        message.addLink(getUriForComments(uriInfo, message), "comments");
+
+        return message;
     }
 
     @POST
@@ -63,7 +70,34 @@ public class MessageResource {
     }
 
     @Path("/{messageId}/comments")
-    public CommentResource getCommentResource() {
+    public CommentResource getCommentResource()
+    {
         return new CommentResource();
+    }
+
+    private String getUriForSelf(@Context UriInfo uriInfo, Message message) {
+        return uriInfo.getBaseUriBuilder()
+                .path(MessageResource.class)
+                .path(Long.toString(message.getId()))
+                .build()
+                .toString();
+    }
+
+    private String getUriForProfile(@Context UriInfo uriInfo, Message message) {
+        return uriInfo.getBaseUriBuilder()
+                .path(ProfileResource.class)
+                .path(message.getAuthor())
+                .build()
+                .toString();
+    }
+
+    private String getUriForComments(@Context UriInfo uriInfo, Message message) {
+        return uriInfo.getBaseUriBuilder()
+                .path(MessageResource.class)
+                .path(MessageResource.class, "getCommentResource")
+                .path(CommentResource.class)
+                .resolveTemplate("messageId", message.getId())
+                .build()
+                .toString();
     }
 }

@@ -16,7 +16,7 @@ public class JerseyConfiguration extends ResourceConfig {
         register(ProfileResource.class);
         register(InjectDemoResource.class);
         register(CommentResource.class);
-        register(DataNotFoundExceptionMapper.class);
-        register(GenericExceptionMapper.class);
+//        register(DataNotFoundExceptionMapper.class);
+//        register(GenericExceptionMapper.class);
     }
 }
